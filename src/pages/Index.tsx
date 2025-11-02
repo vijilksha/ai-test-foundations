@@ -1,11 +1,35 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { CourseHeader } from "@/components/CourseHeader";
+import { LessonNav } from "@/components/LessonNav";
+import { LessonContent } from "@/components/LessonContent";
+import { module1Lessons } from "@/data/courseContent";
 
 const Index = () => {
+  const [currentLessonId, setCurrentLessonId] = useState(module1Lessons[0].id);
+  const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
+
+  const currentLesson = module1Lessons.find((l) => l.id === currentLessonId) || module1Lessons[0];
+
+  const handleLessonComplete = () => {
+    setCompletedLessons((prev) => new Set([...prev, currentLessonId]));
+    
+    // Auto-advance to next lesson
+    const currentIndex = module1Lessons.findIndex((l) => l.id === currentLessonId);
+    if (currentIndex < module1Lessons.length - 1) {
+      setCurrentLessonId(module1Lessons[currentIndex + 1].id);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="flex min-h-screen flex-col">
+      <CourseHeader />
+      <div className="flex flex-1 overflow-hidden">
+        <LessonNav
+          currentLessonId={currentLessonId}
+          onLessonSelect={setCurrentLessonId}
+          completedLessons={completedLessons}
+        />
+        <LessonContent lesson={currentLesson} onComplete={handleLessonComplete} />
       </div>
     </div>
   );
