@@ -29,7 +29,7 @@ interface Lesson {
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [modules, setModules] = useState<Module[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentLessonId, setCurrentLessonId] = useState<string>("");
@@ -130,10 +130,9 @@ const Index = () => {
     }
   };
 
-  const isDemoMode = !user && !loading;
   const currentLesson = lessons.find((l) => l.id === currentLessonId);
 
-  if (loading || dataLoading) {
+  if (dataLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Loading course content...</p>
@@ -151,19 +150,6 @@ const Index = () => {
 
   return (
     <div className="flex min-h-screen flex-col">
-      {isDemoMode && (
-        <div className="bg-yellow-500/10 border-b border-yellow-500/30 px-4 py-2 text-center">
-          <p className="text-sm">
-            <strong>Demo Mode:</strong> This is a preview of the student dashboard.{" "}
-            <button
-              onClick={() => navigate("/auth")}
-              className="underline font-semibold hover:text-primary"
-            >
-              Sign up to access all features
-            </button>
-          </p>
-        </div>
-      )}
       <CourseHeader />
       <div className="flex flex-1 overflow-hidden">
         <LessonNav

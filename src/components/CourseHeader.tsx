@@ -37,37 +37,15 @@ export const CourseHeader = () => {
               <Award className="h-5 w-5" />
               <span className="text-sm font-medium">Module 1: Foundation</span>
             </div>
-            {user ? (
-              <>
-                {isAdmin && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => navigate("/admin")}
-                    className="bg-white/20 hover:bg-white/30"
-                  >
-                    <Shield className="mr-2 h-4 w-4" />
-                    Admin
-                  </Button>
-                )}
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={handleSignOut}
-                  className="bg-white/20 hover:bg-white/30"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </Button>
-              </>
-            ) : (
+            {isAdmin && (
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => navigate("/auth")}
+                onClick={() => navigate("/admin")}
                 className="bg-white/20 hover:bg-white/30"
               >
-                Sign In
+                <Shield className="mr-2 h-4 w-4" />
+                Admin
               </Button>
             )}
           </div>
