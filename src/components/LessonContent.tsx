@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Lightbulb, Code, BookOpen, CheckCircle2 } from "lucide-react";
+import { FileText, Lightbulb, Code, BookOpen, CheckCircle2, Wand2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface Lesson {
   id: string;
@@ -17,9 +20,12 @@ interface Lesson {
 interface LessonContentProps {
   lesson: Lesson;
   onComplete: () => void;
+  onRefresh?: () => void;
 }
 
-export const LessonContent = ({ lesson, onComplete }: LessonContentProps) => {
+export const LessonContent = ({ lesson, onComplete, onRefresh }: LessonContentProps) => {
+  const [generatingContent, setGeneratingContent] = useState(false);
+
   let resourcesRaw: any = [];
   try {
     resourcesRaw = lesson.resources ? JSON.parse(lesson.resources) : [];
@@ -33,6 +39,33 @@ export const LessonContent = ({ lesson, onComplete }: LessonContentProps) => {
       : [];
   const generatedImageUrl: string | undefined = resourcesRaw?.generated_image_url || undefined;
   const generatedAudioUrl: string | undefined = resourcesRaw?.generated_audio_url || undefined;
+
+  const handleGenerateContent = async () => {
+    setGeneratingContent(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-video-content', {
+        body: { lessonId: lesson.id }
+      });
+
+      if (error) throw error;
+
+      toast.success("AI content generated! Refreshing...");
+      
+      // Refresh the lesson data
+      if (onRefresh) {
+        onRefresh();
+      } else {
+        // Fallback: reload the page
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error generating content:", error);
+      toast.error("Failed to generate AI content");
+    } finally {
+      setGeneratingContent(false);
+    }
+  };
+
   return (
     <main className="flex-1 overflow-y-auto">
       <div className="container mx-auto max-w-5xl p-6 space-y-6">
@@ -165,8 +198,18 @@ export const LessonContent = ({ lesson, onComplete }: LessonContentProps) => {
           </TabsContent>
         </Tabs>
 
-        {/* Complete Lesson Button */}
-        <div className="flex justify-end">
+        {/* Action Buttons */}
+        <div className="flex justify-between items-center">
+          <Button 
+            onClick={handleGenerateContent} 
+            variant="outline" 
+            size="lg" 
+            className="gap-2"
+            disabled={generatingContent}
+          >
+            <Wand2 className="h-5 w-5" />
+            {generatingContent ? "Generating..." : "Generate AI Content"}
+          </Button>
           <Button onClick={onComplete} size="lg" className="gap-2">
             <CheckCircle2 className="h-5 w-5" />
             Mark as Complete

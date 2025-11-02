@@ -116,6 +116,20 @@ const Index = () => {
     }
   };
 
+  const handleRefreshLesson = async () => {
+    try {
+      const { data: lessonsData, error } = await supabase
+        .from("lessons")
+        .select("*")
+        .order("order_index");
+
+      if (error) throw error;
+      setLessons(lessonsData || []);
+    } catch (error) {
+      console.error("Failed to refresh lesson:", error);
+    }
+  };
+
   const isDemoMode = !user && !loading;
   const currentLesson = lessons.find((l) => l.id === currentLessonId);
 
@@ -160,7 +174,11 @@ const Index = () => {
           completedLessons={completedLessons}
         />
         {currentLesson && (
-          <LessonContent lesson={currentLesson} onComplete={handleLessonComplete} />
+          <LessonContent 
+            lesson={currentLesson} 
+            onComplete={handleLessonComplete}
+            onRefresh={handleRefreshLesson}
+          />
         )}
       </div>
     </div>
