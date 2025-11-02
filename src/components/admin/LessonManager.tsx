@@ -239,8 +239,10 @@ export const LessonManager = () => {
                 size="sm" 
                 onClick={() => handleGenerateContent(lesson.id)}
                 disabled={generatingContent}
+                className="gap-1"
               >
                 <Wand2 className="h-4 w-4" />
+                Generate
               </Button>
               <Button variant="outline" size="sm" onClick={() => handleEdit(lesson)}>
                 <Edit className="h-4 w-4" />
