@@ -33,10 +33,13 @@ serve(async (req) => {
 
     // Generate image using Lovable AI
     const lovableApiKeyRaw = Deno.env.get('LOVABLE_API_KEY');
-    const lovableApiKey = lovableApiKeyRaw ? lovableApiKeyRaw.trim().replace(/\r?\n/g, '') : '';
+    const lovableApiKey = lovableApiKeyRaw ? lovableApiKeyRaw.trim().replace(/[\r\n\t]/g, '').replace(/[^\x20-\x7E]/g, '') : '';
     if (!lovableApiKey) {
       throw new Error('LOVABLE_API_KEY not configured');
     }
+
+    console.log('LOVABLE_API_KEY length:', lovableApiKey.length);
+    console.log('LOVABLE_API_KEY first 10 chars:', lovableApiKey.substring(0, 10));
 
     const imagePrompt = lesson.visual_suggestion || 'Educational content visualization';
     console.log('Generating image with prompt:', imagePrompt);
@@ -76,10 +79,13 @@ serve(async (req) => {
 
     // Generate audio using ElevenLabs
     const elevenlabsKeyRaw = Deno.env.get('ELEVENLABS_API_KEY');
-    const elevenlabsKey = elevenlabsKeyRaw ? elevenlabsKeyRaw.trim().replace(/\r?\n/g, '') : '';
+    const elevenlabsKey = elevenlabsKeyRaw ? elevenlabsKeyRaw.trim().replace(/[\r\n\t]/g, '').replace(/[^\x20-\x7E]/g, '') : '';
     if (!elevenlabsKey) {
       throw new Error('ELEVENLABS_API_KEY not configured');
     }
+
+    console.log('ELEVENLABS_API_KEY length:', elevenlabsKey.length);
+    console.log('ELEVENLABS_API_KEY first 10 chars:', elevenlabsKey.substring(0, 10));
 
     const audioText = lesson.trainer_script || 'Welcome to this lesson.';
     console.log('Generating audio for text length:', audioText.length);
