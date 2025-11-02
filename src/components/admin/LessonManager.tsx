@@ -131,13 +131,21 @@ export const LessonManager = () => {
 
       if (error) throw error;
 
-      toast.success("Video content generated successfully!");
-      console.log("Generated content:", data);
-      
-      // Optionally update the lesson with generated URLs
-      if (data.imageUrl && data.audioUrl) {
-        toast.info("Image and audio files are ready. You can download them from the console.");
+      // Persist generated asset URLs into the lesson resources as JSON
+      if (data?.imageUrl || data?.audioUrl) {
+        const resourcesPayload = JSON.stringify({
+          generated_image_url: data.imageUrl || null,
+          generated_audio_url: data.audioUrl || null,
+        });
+        const { error: updateError } = await supabase
+          .from('lessons')
+          .update({ resources: resourcesPayload })
+          .eq('id', lessonId);
+        if (updateError) throw updateError;
       }
+
+      toast.success("Generated image and narration saved to lesson. Open the lesson to preview.");
+      fetchLessons();
     } catch (error) {
       console.error("Error generating content:", error);
       toast.error("Failed to generate video content");

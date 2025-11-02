@@ -20,8 +20,19 @@ interface LessonContentProps {
 }
 
 export const LessonContent = ({ lesson, onComplete }: LessonContentProps) => {
-  const resources = lesson.resources ? JSON.parse(lesson.resources) : [];
-
+  let resourcesRaw: any = [];
+  try {
+    resourcesRaw = lesson.resources ? JSON.parse(lesson.resources) : [];
+  } catch {
+    resourcesRaw = [];
+  }
+  const resourceList: string[] = Array.isArray(resourcesRaw)
+    ? resourcesRaw
+    : Array.isArray(resourcesRaw?.items)
+      ? resourcesRaw.items
+      : [];
+  const generatedImageUrl: string | undefined = resourcesRaw?.generated_image_url || undefined;
+  const generatedAudioUrl: string | undefined = resourcesRaw?.generated_audio_url || undefined;
   return (
     <main className="flex-1 overflow-y-auto">
       <div className="container mx-auto max-w-5xl p-6 space-y-6">
@@ -31,16 +42,37 @@ export const LessonContent = ({ lesson, onComplete }: LessonContentProps) => {
           <p className="text-muted-foreground">{lesson.description}</p>
         </div>
 
-        {/* Video */}
+        {/* Media */}
         <Card className="overflow-hidden">
-          <div className="relative aspect-video">
-            <iframe
-              src={lesson.video_url}
-              className="h-full w-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              title={lesson.title}
-            />
+          <div className="relative aspect-video flex items-center justify-center bg-muted">
+            {generatedImageUrl || generatedAudioUrl ? (
+              <div className="w-full h-full flex flex-col md:flex-row gap-4 p-4">
+                {generatedImageUrl && (
+                  <img
+                    src={generatedImageUrl}
+                    alt={`${lesson.title} AI generated visual`}
+                    className="rounded-md object-contain w-full md:w-1/2"
+                    loading="lazy"
+                  />)
+                }
+                {generatedAudioUrl && (
+                  <div className="flex-1 flex items-center justify-center">
+                    <audio controls className="w-full">
+                      <source src={generatedAudioUrl} type="audio/mpeg" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <iframe
+                src={lesson.video_url}
+                className="h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title={lesson.title}
+              />
+            )}
           </div>
         </Card>
 
@@ -117,9 +149,9 @@ export const LessonContent = ({ lesson, onComplete }: LessonContentProps) => {
                 <BookOpen className="h-5 w-5 text-primary" />
                 Additional Resources
               </h2>
-              {resources.length > 0 ? (
+              {resourceList.length > 0 ? (
                 <ul className="space-y-2">
-                  {resources.map((resource: string, index: number) => (
+                  {resourceList.map((resource: string, index: number) => (
                     <li key={index} className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 mt-1 text-primary shrink-0" />
                       <span>{resource}</span>
