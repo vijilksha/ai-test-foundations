@@ -5,6 +5,23 @@ import { Button } from "@/components/ui/button";
 import { FileText, Lightbulb, Image, HelpCircle, CheckCircle2, XCircle, BookOpen } from "lucide-react";
 import { Lesson, Quiz as QuizType } from "@/data/courseContent";
 import { toast } from "sonner";
+import lesson1Image from "@/assets/lessons/lesson1-qa-mindset.png";
+import lesson2Image from "@/assets/lessons/lesson2-sdlc-stlc.png";
+import lesson3Image from "@/assets/lessons/lesson3-test-cases.png";
+import lesson4Image from "@/assets/lessons/lesson4-defect-lifecycle.png";
+import lesson5Image from "@/assets/lessons/lesson5-automation-transition.png";
+import lesson6Image from "@/assets/lessons/lesson6-tool-evolution.png";
+import lesson7Image from "@/assets/lessons/lesson7-exercise.png";
+
+const lessonImages: Record<string, string> = {
+  "lesson-1": lesson1Image,
+  "lesson-2": lesson2Image,
+  "lesson-3": lesson3Image,
+  "lesson-4": lesson4Image,
+  "lesson-5": lesson5Image,
+  "lesson-6": lesson6Image,
+  "lesson-7": lesson7Image,
+};
 
 interface LessonContentProps {
   lesson: Lesson;
@@ -115,10 +132,17 @@ export const LessonContent = ({ lesson, onComplete }: LessonContentProps) => {
             <Card className="p-6">
               <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
                 <Image className="h-5 w-5 text-primary" />
-                Visual Suggestions
+                Visual Content
               </h2>
-              <div className="rounded-lg bg-accent/50 p-6">
-                <p className="leading-relaxed text-foreground">{lesson.visualSuggestion}</p>
+              <div className="rounded-lg overflow-hidden bg-accent/50">
+                <img 
+                  src={lessonImages[lesson.id]} 
+                  alt={`Visual guide for ${lesson.title}`}
+                  className="w-full h-auto"
+                />
+              </div>
+              <div className="mt-4 rounded-lg bg-muted/50 p-4">
+                <p className="text-sm text-muted-foreground italic">{lesson.visualSuggestion}</p>
               </div>
             </Card>
           </TabsContent>
