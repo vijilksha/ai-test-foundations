@@ -11,12 +11,11 @@ export const CourseHeader = () => {
   const { isAdmin } = useUserRole();
 
   const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (error) {
-      toast.error("Failed to sign out");
-    } else {
+    try {
+      await signOut();
       toast.success("Signed out successfully");
-      navigate("/auth");
+    } catch (error) {
+      toast.error("Failed to sign out");
     }
   };
 

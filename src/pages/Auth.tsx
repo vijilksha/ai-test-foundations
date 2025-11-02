@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,90 +11,115 @@ import { GraduationCap } from "lucide-react";
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
 
-  // Redirect if already logged in
-  if (user) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/");
+      }
+    };
+    checkSession();
+  }, [navigate]);
 
-  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    const { error } = await signIn(email, password);
+      if (error) throw error;
 
-    if (error) {
+      if (data.session) {
+        toast.success("Welcome back!");
+        navigate("/");
+      }
+    } catch (error: any) {
       toast.error(error.message);
-    } else {
-      toast.success("Welcome back!");
-      navigate("/");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const fullName = formData.get("fullName") as string;
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: fullName,
+          },
+        },
+      });
 
-    const { error } = await signUp(email, password, fullName);
+      if (error) throw error;
 
-    if (error) {
+      if (data.session) {
+        toast.success("Account created successfully!");
+        navigate("/");
+      } else {
+        toast.success("Account created! Please check your email.");
+      }
+    } catch (error: any) {
       toast.error(error.message);
-    } else {
-      toast.success("Account created! Welcome!");
-      navigate("/");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20 p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-            <GraduationCap className="h-10 w-10 text-primary-foreground" />
+        <CardHeader className="space-y-1 text-center">
+          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
+            <GraduationCap className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl">AI-Powered Testing Course</CardTitle>
-          <CardDescription>Learn automation testing from Selenium to Playwright</CardDescription>
+          <CardTitle className="text-2xl">AI Automation Testing Course</CardTitle>
+          <CardDescription>
+            Sign in to continue your learning journey
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin">
+          <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
+              <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
+
+            <TabsContent value="login">
+              <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
+                  <Label htmlFor="login-email">Email</Label>
                   <Input
-                    id="signin-email"
-                    name="email"
+                    id="login-email"
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
+                  <Label htmlFor="login-password">Password</Label>
                   <Input
-                    id="signin-password"
-                    name="password"
+                    id="login-password"
                     type="password"
                     placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
@@ -103,16 +128,17 @@ const Auth = () => {
                 </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
+              <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signup-name">Full Name</Label>
                   <Input
                     id="signup-name"
-                    name="fullName"
                     type="text"
                     placeholder="John Doe"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                     required
                   />
                 </div>
@@ -120,9 +146,10 @@ const Auth = () => {
                   <Label htmlFor="signup-email">Email</Label>
                   <Input
                     id="signup-email"
-                    name="email"
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -130,9 +157,10 @@ const Auth = () => {
                   <Label htmlFor="signup-password">Password</Label>
                   <Input
                     id="signup-password"
-                    name="password"
                     type="password"
                     placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
                   />
