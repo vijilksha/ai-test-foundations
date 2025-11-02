@@ -8,6 +8,7 @@ export interface Quiz {
 export interface Lesson {
   id: string;
   title: string;
+  videoUrl: string;
   trainerScript: string;
   visualSuggestion: string;
   example: string;
@@ -18,6 +19,7 @@ export const module1Lessons: Lesson[] = [
   {
     id: "lesson-1",
     title: "Introduction to Testing & QA Mindset",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     trainerScript: `Welcome to Module 1 of AI-Powered Automation Testing! I'm so excited you're here.
 
 Let me start with a question: Have you ever downloaded an app, and it crashed the moment you opened it? Or tried to checkout online, only to find the payment button doesn't work? Frustrating, right?
@@ -63,6 +65,7 @@ Real-world example: In 2023, a major bank released a mobile app update that allo
   {
     id: "lesson-2",
     title: "Software Development Life Cycle (SDLC) vs Software Testing Life Cycle (STLC)",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     trainerScript: `Now that we understand the QA mindset, let's talk about where testing fits into the bigger picture.
 
 Every software project follows a lifecycle—from initial planning to deployment and maintenance. This is called the Software Development Life Cycle, or SDLC.
@@ -135,6 +138,7 @@ Real-world example: A fintech company using Agile noticed that bugs found in pro
   {
     id: "lesson-3",
     title: "Manual Testing Essentials - Test Scenarios & Test Cases",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     trainerScript: `Let's dive into the heart of manual testing: creating test scenarios and test cases.
 
 First, what's the difference?
@@ -221,6 +225,7 @@ Pro tip: Great test cases are:
   {
     id: "lesson-4",
     title: "Defect Life Cycle",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     trainerScript: `You've found a bug! Now what?
 
 Understanding the defect life cycle is crucial because a bug isn't just "found" and "fixed"—it goes through multiple stages, and different people are involved at each step.
@@ -311,6 +316,7 @@ The difference? Clear communication and detailed documentation.`,
   {
     id: "lesson-5",
     title: "Transition from Manual to Automation",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     trainerScript: `Let's address the question I hear most often: "Should I learn automation, or will AI replace me?"
 
 Here's the truth: Manual testing isn't going away, but it's evolving. And yes, you absolutely should learn automation—not because manual testing is obsolete, but because the combination of manual and automated testing makes you incredibly valuable.
@@ -402,6 +408,7 @@ The sweet spot? Automate the repetitive, manual test the creative.`,
   {
     id: "lesson-6",
     title: "Evolution of Automation Tools - QTP to AI Testing",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     trainerScript: `Let's take a journey through the history of automation testing. Understanding where we've been helps you appreciate where we're going.
 
 Phase 1: The Record-and-Playback Era (2000-2010)
@@ -517,6 +524,7 @@ The lesson? Each generation of tools makes testing faster, more reliable, and le
   {
     id: "lesson-7",
     title: "Hands-on Exercise: Write Test Scenarios for E-commerce Login",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     trainerScript: `Alright, it's time to put everything we've learned into practice!
 
 Your assignment: Write comprehensive test scenarios and test cases for an e-commerce website's login functionality.

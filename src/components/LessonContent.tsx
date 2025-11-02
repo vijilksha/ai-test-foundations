@@ -55,16 +55,18 @@ export const LessonContent = ({ lesson, onComplete }: LessonContentProps) => {
       <div className="mx-auto max-w-6xl">
         {/* Video Section */}
         <div className="bg-card border-b">
-          <div className="aspect-video w-full bg-muted flex items-center justify-center">
-            <div className="text-center">
-              <div className="mb-4 h-20 w-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                <svg className="h-10 w-10 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">{lesson.title}</h3>
-              <p className="text-sm text-muted-foreground">Video content will be added here</p>
-            </div>
+          <div className="aspect-video w-full bg-black">
+            <iframe
+              className="w-full h-full"
+              src={lesson.videoUrl}
+              title={lesson.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          <div className="p-4 border-t">
+            <h1 className="text-2xl font-bold">{lesson.title}</h1>
+            <p className="text-sm text-muted-foreground mt-1">Module 1: Foundation</p>
           </div>
         </div>
 
