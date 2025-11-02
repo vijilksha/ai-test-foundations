@@ -1,1 +1,4 @@
 project_id = "hdtnemxizxbcnyfmzful"
+
+[functions.generate-video-content]
+verify_jwt = true

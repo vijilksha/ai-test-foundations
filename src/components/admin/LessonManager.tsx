@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Wand2 } from "lucide-react";
 
 interface Module {
   id: string;
@@ -35,6 +35,7 @@ export const LessonManager = () => {
   const [resources, setResources] = useState("");
   const [orderIndex, setOrderIndex] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [generatingContent, setGeneratingContent] = useState(false);
 
   useEffect(() => {
     fetchModules();
@@ -121,6 +122,30 @@ export const LessonManager = () => {
     setOrderIndex("");
   };
 
+  const handleGenerateContent = async (lessonId: string) => {
+    setGeneratingContent(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-video-content', {
+        body: { lessonId }
+      });
+
+      if (error) throw error;
+
+      toast.success("Video content generated successfully!");
+      console.log("Generated content:", data);
+      
+      // Optionally update the lesson with generated URLs
+      if (data.imageUrl && data.audioUrl) {
+        toast.info("Image and audio files are ready. You can download them from the console.");
+      }
+    } catch (error) {
+      console.error("Error generating content:", error);
+      toast.error("Failed to generate video content");
+    } finally {
+      setGeneratingContent(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border p-4">
@@ -201,6 +226,14 @@ export const LessonManager = () => {
               <p className="text-sm text-muted-foreground">{lesson.description}</p>
             </div>
             <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handleGenerateContent(lesson.id)}
+                disabled={generatingContent}
+              >
+                <Wand2 className="h-4 w-4" />
+              </Button>
               <Button variant="outline" size="sm" onClick={() => handleEdit(lesson)}>
                 <Edit className="h-4 w-4" />
               </Button>
