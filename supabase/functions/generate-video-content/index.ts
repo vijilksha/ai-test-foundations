@@ -46,10 +46,10 @@ serve(async (req) => {
 
     const imageResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${lovableApiKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: new Headers([
+        ['Authorization', `Bearer ${lovableApiKey}`],
+        ['Content-Type', 'application/json'],
+      ]),
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash-image-preview',
         messages: [
@@ -92,10 +92,10 @@ serve(async (req) => {
 
     const audioResponse = await fetch('https://api.elevenlabs.io/v1/text-to-speech/9BWtsMINqrJLrRacOk9x', {
       method: 'POST',
-      headers: {
-        'xi-api-key': elevenlabsKey,
-        'Content-Type': 'application/json',
-      },
+      headers: new Headers([
+        ['xi-api-key', elevenlabsKey],
+        ['Content-Type', 'application/json'],
+      ]),
       body: JSON.stringify({
         text: audioText,
         model_id: 'eleven_multilingual_v2',
