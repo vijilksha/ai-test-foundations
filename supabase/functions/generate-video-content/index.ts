@@ -32,7 +32,8 @@ serve(async (req) => {
     console.log('Generating content for lesson:', lessonId);
 
     // Generate image using Lovable AI
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    const lovableApiKeyRaw = Deno.env.get('LOVABLE_API_KEY');
+    const lovableApiKey = lovableApiKeyRaw ? lovableApiKeyRaw.trim().replace(/\r?\n/g, '') : '';
     if (!lovableApiKey) {
       throw new Error('LOVABLE_API_KEY not configured');
     }
@@ -74,7 +75,8 @@ serve(async (req) => {
     console.log('Image generated successfully');
 
     // Generate audio using ElevenLabs
-    const elevenlabsKey = Deno.env.get('ELEVENLABS_API_KEY');
+    const elevenlabsKeyRaw = Deno.env.get('ELEVENLABS_API_KEY');
+    const elevenlabsKey = elevenlabsKeyRaw ? elevenlabsKeyRaw.trim().replace(/\r?\n/g, '') : '';
     if (!elevenlabsKey) {
       throw new Error('ELEVENLABS_API_KEY not configured');
     }
