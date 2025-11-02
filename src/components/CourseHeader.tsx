@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 export const CourseHeader = () => {
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const { isAdmin } = useUserRole();
 
   const handleSignOut = async () => {
@@ -37,26 +37,39 @@ export const CourseHeader = () => {
               <Award className="h-5 w-5" />
               <span className="text-sm font-medium">Module 1: Foundation</span>
             </div>
-            {isAdmin && (
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => navigate("/admin")}
+                    className="bg-white/20 hover:bg-white/30"
+                  >
+                    <Shield className="mr-2 h-4 w-4" />
+                    Admin
+                  </Button>
+                )}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="bg-white/20 hover:bg-white/30"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => navigate("/admin")}
+                onClick={() => navigate("/auth")}
                 className="bg-white/20 hover:bg-white/30"
               >
-                <Shield className="mr-2 h-4 w-4" />
-                Admin
+                Sign In
               </Button>
             )}
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleSignOut}
-              className="bg-white/20 hover:bg-white/30"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
-            </Button>
           </div>
         </div>
       </div>

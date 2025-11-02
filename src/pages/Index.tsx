@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { CourseHeader } from "@/components/CourseHeader";
@@ -12,18 +12,13 @@ const Index = () => {
   const [currentLessonId, setCurrentLessonId] = useState(module1Lessons[0].id);
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
+  const isDemoMode = !user && !loading;
 
   const currentLesson = module1Lessons.find((l) => l.id === currentLessonId) || module1Lessons[0];
 
   const handleLessonComplete = () => {
     setCompletedLessons((prev) => new Set([...prev, currentLessonId]));
     
-    // Auto-advance to next lesson
     const currentIndex = module1Lessons.findIndex((l) => l.id === currentLessonId);
     if (currentIndex < module1Lessons.length - 1) {
       setCurrentLessonId(module1Lessons[currentIndex + 1].id);
@@ -38,12 +33,21 @@ const Index = () => {
     );
   }
 
-  if (!user) {
-    return null;
-  }
-
   return (
     <div className="flex min-h-screen flex-col">
+      {isDemoMode && (
+        <div className="bg-yellow-500/10 border-b border-yellow-500/30 px-4 py-2 text-center">
+          <p className="text-sm">
+            <strong>Demo Mode:</strong> This is a preview of the student dashboard.{" "}
+            <button
+              onClick={() => navigate("/auth")}
+              className="underline font-semibold hover:text-primary"
+            >
+              Sign up to access all features
+            </button>
+          </p>
+        </div>
+      )}
       <CourseHeader />
       <div className="flex flex-1 overflow-hidden">
         <LessonNav
