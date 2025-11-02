@@ -1,12 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { CourseHeader } from "@/components/CourseHeader";
 import { LessonNav } from "@/components/LessonNav";
 import { LessonContent } from "@/components/LessonContent";
 import { module1Lessons } from "@/data/courseContent";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [currentLessonId, setCurrentLessonId] = useState(module1Lessons[0].id);
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth");
+    }
+  }, [user, loading, navigate]);
 
   const currentLesson = module1Lessons.find((l) => l.id === currentLessonId) || module1Lessons[0];
 
@@ -19,6 +29,18 @@ const Index = () => {
       setCurrentLessonId(module1Lessons[currentIndex + 1].id);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
